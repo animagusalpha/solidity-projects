@@ -66,7 +66,7 @@ contract ERC20 {
         emit Transfer(msg.sender, recipient, amount);
     }
 
-    function approve(address spender, uint256 amount) public {
+    function approve(address spender, uint256 amount) public virtual {
         //allowing other account to spend token on your behalf
         allowance[msg.sender][spender] = amount;
         emit Approval(msg.sender, spender, amount);
@@ -76,7 +76,7 @@ contract ERC20 {
         address sender,
         address recipient,
         uint256 amount
-    ) public {
+    ) public virtual {
         //transfering from other account after approval
         require(
             allowance[sender][msg.sender] >= amount,
