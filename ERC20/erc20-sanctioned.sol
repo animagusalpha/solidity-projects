@@ -23,13 +23,11 @@ contract Sanctioned is ERC20 {
     }
 
     modifier onlyGov() {
-        //0x5B38Da6a701c568545dCfcB03FcB875f56beddC4
         require(msg.sender == govAddr, "Not Government Address!");
         _;
     }
 
     function addToBlacklist(address toBlacklist) public onlyGov {
-        //0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2 , 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db
         require(Blacklist[toBlacklist] == false, "Already Blacklisted");
         Blacklist[toBlacklist] = true;
     }
@@ -45,5 +43,27 @@ contract Sanctioned is ERC20 {
         balanceOf[msg.sender] -= amount;
         balanceOf[recipient] += amount;
         emit Transfer(msg.sender, recipient, amount);
+    }
+
+    function approve(address spender, uint256 amount) public override {
+        require(Blacklist[msg.sender] == false, "Blacklisted Wallet");
+        allowance[msg.sender][spender] = amount;
+        emit Approval(msg.sender, spender, amount);
+    }
+
+    function transferFrom(
+        address sender,
+        address recipient,
+        uint256 amount
+    ) public override {
+        require(Blacklist[sender] == false, "Blacklisted Wallet");
+
+        require(
+            allowance[sender][msg.sender] >= amount,
+            "Allowance insufficient!"
+        );
+        allowance[sender][msg.sender] -= amount;
+        balanceOf[sender] -= amount;
+        balanceOf[recipient] += amount;
     }
 }
