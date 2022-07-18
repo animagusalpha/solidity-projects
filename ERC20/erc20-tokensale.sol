@@ -13,7 +13,7 @@ pragma solidity ^0.8.10;
 import "./erc20-simple.sol";
 
 contract tokensale is ERC20 {
-    function mintWithEth() public payable {
+    function mintWithEth() public virtual payable {
         require(msg.value == 1 ether, "tokensale requires 1 Ether (only)");
         require(totalSupply + 1000 <= 1000000, "Purchase exceeds max supply");
 
